@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vipercell - Top Up Terlengkap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. TAMPILAN (CSS) --- */
+        :root {
+            --bg-main: #0f172a; --bg-card: #1e293b; --bg-input: #334155;
+            --primary: #3b82f6; --accent: #fbbf24; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --border: #334155; --success: #10b981; --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 100px; }
+
+        /* Header */
+        header { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--text-main); letter-spacing: 1px; }
+        .logo span { color: var(--accent); }
+
+        /* Container */
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .hidden { display: none !important; }
+
+        /* Banner */
+        .banner-wrapper { position: relative; width: 100%; height: 170px; border-radius: 16px; overflow: hidden; margin-bottom: 25px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .banner-slide { width: 100%; height: 100%; object-fit: cover; display: none; animation: fadeIn 1s; }
+        .banner-slide.active { display: block; }
+        @keyframes fadeIn { from {opacity: 0.5} to {opacity: 1} }
+
+        /* Grid System */
+        .section-header { display: flex; align-items: center; gap: 10px; margin: 30px 0 15px; }
+        .section-icon { width: 4px; height: 24px; background: var(--primary); border-radius: 2px; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .game-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: 0.3s; height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: #263345; }
+        .game-icon { font-size: 30px; margin-bottom: 8px; display: block; }
+        .game-title { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
+
+        /* Inputs */
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
+        .form-input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; font-size: 1rem; transition: 0.3s; }
+        .form-input:focus { border-color: var(--primary); }
+
+        /* Nominal Grid */
+        .nominal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .nominal-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; cursor: pointer; transition: 0.2s; }
+        .nominal-card:hover { background: #263345; }
+        .nominal-card.active { border-color: var(--accent); background: rgba(251, 191, 36, 0.15); position: relative; }
+        .nominal-card.active::after { content: '✓'; position: absolute; top: 5px; right: 8px; color: var(--accent); font-weight: bold; }
+        .item-name { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; }
+        .item-price { font-size: 0.95rem; color: var(--accent); font-weight: 700; }
+
+        /* Checkout & Modal */
+        .checkout-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: center; z-index: 90; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: bold; width: 100%; max-width: 600px; cursor: pointer; font-size: 1rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: var(--bg-card); width: 90%; max-width: 400px; border-radius: 16px; padding: 25px; border: 1px solid var(--border); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Admin & History */
+        .admin-card { background: #263345; padding: 15px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .btn-action { padding: 8px 12px; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .history-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 12px; position: relative; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; float: right; }
+        .status-pending { background: rgba(251, 191, 36, 0.2); color: var(--accent); }
+        .status-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-failed { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-help { width: 100%; padding: 8px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-light); border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+
+        /* Helper */
+        .float-wa { position: fixed; bottom: 95px; right: 20px; background: #25D366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 80; cursor: pointer; }
+        .back-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .promo-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .promo-input { flex: 1; padding: 12px; background: #111; border: 1px solid var(--border); border-radius: 8px; color: white; text-transform: uppercase; font-weight: bold; }
+        .btn-check { background: var(--accent); border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; color: #000; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><i class="fa-solid fa-bolt"></i> VIPER<span>CELL</span></div>
+    <div style="font-size:0.75rem; font-weight:bold; color:var(--success); display:flex; align-items:center; gap:5px;">
+        <span style="width:8px; height:8px; background:var(--success); border-radius:50%;"></span> 24 Jam
+    </div>
+</header>
+
+<div class="container">
+
+    <div id="view-home">
+        <div class="banner-wrapper" id="banner-slider">
+            <div class="banner-placeholder">
+                <i class="fa-regular fa-images" style="font-size:40px; margin-bottom:10px; opacity:0.5;"></i>
+                <p>Promo Spesial Vipercell</p>
+            </div>
+        </div>
+
+        <div class="section-header"><div class="section-icon"></div><div class="section-title">Games Populer</div></div>
+        <div class="game-grid">
+            <div class="game-card" onclick="openOrder('ff')"><span class="game-icon">🔥</span><span class="game-title">Free Fire</span></div>
+            <div class="game-card" onclick="openOrder('ml')"><span class="game-icon">⚔️</span><span class="game-title">Mobile Legends</span></div>
+            <div class="game-card" onclick="openOrder('pubg')"><span class="game-icon">🔫</span><span class="game-title">PUBG Mobile</span></div>
+            <div class="game-card" onclick="openOrder('codm')"><span class="game-icon">🎖️</span><span class="game-title">Call of Duty</span></div>
+            <div class="game-card" onclick="openOrder('genshin')"><span class="game-icon">✨</span><span class="game-title">Genshin Impact</span></div>
+            <div class="game-card" onclick="openOrder('pulsa')"><span class="game-icon">📱</span><span class="game-title">Pulsa Tsel</span></div>
+        </div>
+
+        <div class="section-header"><div class="section-icon"></div><div class="section-title">E-Wallet & PPOB</div></div>
+        <div class="game-grid" style="grid-template-columns: 1fr;">
+            <div class="game-card" onclick="openEwallet()" style="height: 100px; flex-direction: row; gap: 20px; text-align: left; padding: 0 25px;">
+                <span class="game-icon" style="margin:0; font-size:40px;">💳</span>
+                <div>
+                    <span class="game-title" style="font-size:1.1rem; display:block; color:var(--text-main);">Isi Saldo Digital</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Dana, OVO, Gopay, Driver</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top:40px;"><div class="section-icon"></div><div class="section-title">Riwayat Transaksi</div></div>
+        <div id="history-list">
+            <div style="text-align:center; padding:30px; border:1px dashed var(--border); border-radius:12px; color:var(--text-muted);">
+                <i class="fa-solid fa-spinner fa-spin"></i> Memuat data...
+            </div>
+        </div>
+
+        <div class="admin-link" onclick="checkAdminSession()">
+            <i class="fa-solid fa-shield-halved"></i> Login Admin Dashboard
+        </div>
+    </div>
+
+    <div id="view-order-game" class="hidden">
+        <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+        <h2 id="game-title-display" style="margin-bottom:25px; color:var(--accent); border-bottom:1px solid var(--border); padding-bottom:15px;">Nama Game</h2>
+        
+        <div class="input-group">
+            <label class="input-label">Lengkapi Data Akun</label>
+            <div style="display:flex; gap:12px;">
+                <input type="text" id="input-id" class="form-input" placeholder="User ID / No HP">
+                <input type="text" id="input-server" class="form-input" placeholder="Server ID" style="display:none; width:40%;">
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">*Mohon cek ID agar tidak salah.</p>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Pilih Item</label>
+            <div class="nominal-grid" id="nominal-list"></div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Metode Pembayaran</label>
+            <div style="padding:15px; background:rgba(59, 130, 246, 0.1); border:1px solid var(--primary); border-radius:12px; display:flex; align-items:center; gap:15px;">
+                <i class="fa-solid fa-qrcode" style="font-size:30px; color:var(--text-main);"></i>
+                <div>
+                    <strong style="display:block;">QRIS (All Payment)</strong>
+                    <span style="font-size:0.85rem; color:var(--text-muted);">Scan via WhatsApp</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-order-ewallet" class="hidden">
+        <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+        <h2 style="margin-bottom:25px; color:var(--primary);">Top Up E-Wallet</h2>
+        
+        <div class="input-group">
+            <label class="input-label">Nominal (Rp)</label>
+            <input type="number" id="ewallet-nominal" class="form-input" placeholder="Contoh: 50000" oninput="calcEwallet()">
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">*Min: Rp 10.000, Max: Rp 1.000.000</p>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Pilih E-Wallet</label>
+            <select id="ewallet-type" class="form-input">
+                <option value="Dana">Dana</option><option value="GoPay">GoPay</option>
+                <option value="LinkAja">LinkAja</option><option value="ShopeePay">ShopeePay</option>
+                <option value="OVO">OVO</option><option value="Maxim Customer">Maxim Customer</option>
+                <option value="Grab Driver">Grab Driver</option><option value="iSaku">iSaku</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Nomor HP</label>
+            <input type="number" id="ewallet-phone" class="form-input" placeholder="08xxxxxxxxxx">
+        </div>
+
+        <div style="padding:20px; border:1px solid var(--primary); border-radius:12px; background:rgba(59, 130, 246, 0.1);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="color:var(--text-muted);">Biaya Admin:</span><span id="text-admin" style="color:var(--accent);">Rp 0</span>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;"></div>
+            <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800;">
+                <span>Total:</span><span id="text-total">Rp 0</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-admin-login" class="hidden">
+        <button class="back-btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+        <div style="max-width:400px; margin:60px auto; text-align:center;">
+            <h2 style="color:var(--danger); margin-bottom:30px;">Admin Area</h2>
+            <div class="admin-card" style="background:var(--bg-card); padding:30px;">
+                <input type="text" id="admin-user" class="form-input" placeholder="Username" style="margin-bottom:15px;">
+                <input type="password" id="admin-pass" class="form-input" placeholder="Password" style="margin-bottom:25px;">
+                <button class="btn-primary" style="background:var(--danger); width:100%;" onclick="processLogin()">MASUK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-admin-dashboard" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border-bottom:1px solid var(--border); padding-bottom:20px;">
+            <h2 style="color:var(--primary);">Dashboard</h2>
+            <button onclick="adminLogout()" class="btn-action" style="background:var(--danger); padding:10px 20px;">Logout</button>
+        </div>
+
+        <h3 style="margin-bottom:15px; color:var(--text-main);">🖼️ Banner Promo</h3>
+        <div class="admin-card">
+            <input type="file" id="banner-upload" accept="image/*" class="form-input" style="padding:12px;">
+            <button class="btn-action" style="background:var(--primary); margin-top:15px; width:100%;" onclick="uploadBanner()">Upload Gambar</button>
+            <div id="admin-banner-list" style="margin-top:20px;"></div>
+        </div>
+
+        <h3 style="margin-bottom:15px; color:var(--text-main); margin-top:30px;">🎟️ Kode Promo</h3>
+        <div class="admin-card">
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="text" id="new-promo-code" class="form-input" placeholder="Kode">
+                <input type="number" id="new-promo-value" class="form-input" placeholder="Diskon (Rp)">
+            </div>
+            <button class="btn-action" style="background:var(--accent); color:#000; width:100%;" onclick="addPromo()">Simpan Promo</button>
+            <div id="admin-promo-list" style="margin-top:20px;"></div>
+        </div>
+
+        <h3 style="margin-bottom:15px; color:var(--text-main); margin-top:30px;">💰 Edit Harga</h3>
+        <div class="admin-card">
+            <select id="admin-game-select" class="form-input" onchange="loadAdminPrices()" style="margin-bottom:15px;">
+                <option value="ff">Free Fire</option><option value="ml">Mobile Legends</option>
+                <option value="pubg">PUBG</option><option value="codm">CODM</option>
+                <option value="genshin">Genshin</option><option value="pulsa">Pulsa</option>
+            </select>
+            <div id="admin-price-editor" style="max-height:300px; overflow-y:auto; padding-right:5px;"></div>
+            <button class="btn-action" style="background:var(--success); width:100%; margin-top:20px;" onclick="savePriceChanges()">Simpan Harga</button>
+        </div>
+
+        <h3 style="margin-bottom:15px; color:var(--text-main); margin-top:30px;">📦 Pesanan Masuk</h3>
+        <div id="admin-order-list"></div>
+    </div>
+
+</div>
+
+<div class="float-wa" onclick="window.open('https://wa.me/6285656321860','_blank')"><i class="fa-brands fa-whatsapp"></i></div>
+
+<div id="checkout-bar" class="checkout-bar hidden">
+    <button class="btn-primary" onclick="validateModal()">Beli Sekarang <i class="fa-solid fa-cart-shopping"></i></button>
+</div>
+
+<div id="confirmation-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 style="text-align:center; margin-bottom:20px; color:var(--text-main);">Konfirmasi</h3>
+        <div class="promo-container">
+            <input type="text" id="user-promo-code" class="promo-input" placeholder="PUNYA KODE PROMO?">
+            <button class="btn-check" onclick="applyPromo()">CEK</button>
+        </div>
+        <div id="modal-details" style="background:#111; padding:20px; border-radius:12px; margin-bottom:25px; border:1px solid var(--border);"></div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeModal()">Batal</button>
+            <button class="btn-confirm" onclick="processOrder()">Lanjut WA <i class="fa-brands fa-whatsapp"></i></button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, onSnapshot, orderBy, updateDoc, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // 1. FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyD034vQaWmVWCDmNBaThajkCvSdwlW_pQA",
+      authDomain: "vipercell-a76bd.firebaseapp.com",
+      projectId: "vipercell-a76bd",
+      storageBucket: "vipercell-a76bd.firebasestorage.app",
+      messagingSenderId: "847098600224",
+      appId: "1:847098600224:web:86effe906a56ce3a625545"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ORDERS_COL = "orders";
+    const CONFIG_COL = "config";
+    const PROMO_COL = "promos";
+
+    // 2. DATA LIST HARGA (100% LENGKAP)
+    let prices = {
+        ff: { name: "Free Fire", type: "single", items: [
+            {n:"5 DM", p:"3.786"}, {n:"10 DM", p:"4.557"}, {n:"15 DM", p:"5.330"}, {n:"20 DM", p:"6.014"},
+            {n:"25 DM", p:"6.805"}, {n:"30 DM", p:"7.545"}, {n:"50 DM", p:"8.042"}, {n:"55 DM", p:"9.830"},
+            {n:"70 DM", p:"10.977"}, {n:"100 DM", p:"14.909"}, {n:"140 DM", p:"19.280"}, {n:"355 DM", p:"43.855"},
+            {n:"720 DM", p:"89.050"}, {n:"1.000 DM", p:"120.635"}, {n:"2.000 DM", p:"230.346"}
+        ]},
+        ml: { name: "Mobile Legends", type: "double", items: [
+            {n:"5 DM", p:"4.495"}, {n:"12 (11+1) DM", p:"6.302"}, {n:"19 (17+2) DM", p:"7.868"}, {n:"28 (25+3) DM", p:"10.288"},
+            {n:"36 (33+3) DM", p:"12.689"}, {n:"44 (40+4) DM", p:"14.478"}, {n:"56 (51+5) DM", p:"17.869"}, {n:"59 (53+6) DM", p:"18.280"},
+            {n:"85 (77+8) DM", p:"25.036"}, {n:"170 (154+16) DM", p:"47.482"}, {n:"222 (200+22) DM", p:"62.348"}, {n:"257 (234+23) DM", p:"70.998"},
+            {n:"Weekly Diamond Pass", p:"30.300"}, {n:"Twilight Pass", p:"153.790"}, {n:"1.159 (1031+128) DM", p:"297.041"}
+        ]},
+        pubg: { name: "PUBG Mobile", type: "single", items: [
+            {n:"60 UC", p:"17.310"}, {n:"120 UC", p:"31.888"}, {n:"325 UC", p:"74.983"}, {n:"385 UC", p:"93.153"}, 
+            {n:"660 UC", p:"147.967"}, {n:"720 UC", p:"169.414"}
+        ]},
+        codm: { name: "Call of Duty", type: "single", items: [
+            {n:"26+5 CP", p:"8.000"}, {n:"53+9 CP", p:"12.400"}, {n:"106+21 CP", p:"21.700"}, {n:"264+53 CP", p:"47.200"},
+            {n:"528+106 CP", p:"98.050"}, {n:"1056+317 CP", p:"188.550"}, {n:"1584+475 CP", p:"274.050"}
+        ]},
+        genshin: { name: "Genshin Impact", type: "single", items: [
+            {n:"60 Crystals", p:"14.750"}, {n:"300+30 Crystals", p:"64.400"}, {n:"980+110 Crystals", p:"188.175"},
+            {n:"1980+260 Crystals", p:"401.000"}, {n:"3280+600 Crystals", p:"628.950"}, {n:"Blessing Welkin Moon", p:"64.390"}
+        ]},
+        pulsa: { name: "Pulsa Telkomsel", type: "single", items: [
+            {n:"2.000", p:"5.775"}, {n:"5.000", p:"8.245"}, {n:"10.000", p:"13.185"}, {n:"20.000", p:"22.847"},
+            {n:"25.000", p:"27.700"}, {n:"50.000", p:"52.605"}, {n:"100.000", p:"102.960"}, {n:"150.000", p:"157.125"}, {n:"200.000", p:"204.450"}
+        ]}
+    };
+
+    let banners = [];
+    let currentPromo = null;
+    let tempOrderData = null;
+    let activeMode = "";
+    let currentGameKey = "";
+    let selectedGameItem = null;
+
+    if(!localStorage.getItem('viper_device_id')) localStorage.setItem('viper_device_id', 'user_'+Date.now());
+    const myDeviceId = localStorage.getItem('viper_device_id');
+    const genId = () => `VP${new Date().getDate()}${new Date().getMonth()+1}-${Math.floor(1000+Math.random()*9000)}`;
+    const fmtRp = (n) => "Rp " + parseInt(n).toLocaleString('id-ID');
+
+    // --- AUTO FIX DATABASE & INIT ---
+    // Fungsi ini akan memaksa database mengikuti list harga yang ada di kodingan
+    // agar item tidak hilang/gangguan.
+    async function initConfig() {
+        onSnapshot(doc(db, CONFIG_COL, "main_config"), (snap) => {
+            if(snap.exists()) {
+                const d = snap.data();
+                // Logic: Jika di database kosong, pakai hardcoded.
+                // TAPI untuk amannya, kita pakai hardcoded sebagai fallback utama.
+                if(d.banners) { banners = d.banners; renderBanners(); }
+            } else {
+                // Upload Default
+                setDoc(doc(db, CONFIG_COL, "main_config"), { prices: JSON.stringify(prices), banners: [] });
+            }
+        });
+        
+        // FORCE UPDATE PRICES TO DB ON LOAD (AUTO-FIX)
+        // Ini memastikan item selalu muncul sesuai kodingan
+        setDoc(doc(db, CONFIG_COL, "main_config"), { prices: JSON.stringify(prices) }, {merge:true});
+    }
+
+    function renderBanners() {
+        const c = document.getElementById('banner-slider');
+        if(banners.length > 0) {
+            c.innerHTML = "";
+            banners.forEach((s, i) => {
+                c.innerHTML += `<img src="${s}" class="banner-slide ${i===0?'active':''}">`;
+            });
+        }
+        const ac = document.getElementById('admin-banner-list');
+        ac.innerHTML = "";
+        banners.forEach((s, i) => {
+            ac.innerHTML += `<div style="background:#334155; padding:8px; margin-bottom:5px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <img src="${s}" style="height:50px; border-radius:4px;">
+                <button onclick="window.delBanner(${i})" style="background:#ef4444; border:none; color:white; border-radius:6px; padding:6px 12px; cursor:pointer;">Hapus</button>
+            </div>`;
+        });
+    }
+
+    let slideIdx = 0;
+    setInterval(() => {
+        const s = document.querySelectorAll('.banner-slide');
+        if(s.length > 0) {
+            s.forEach(x => x.classList.remove('active'));
+            slideIdx = (slideIdx + 1) % s.length;
+            s[slideIdx].classList.add('active');
+        }
+    }, 4000);
+
+    // --- NAVIGATION ---
+    window.openOrder = (k) => {
+        activeMode = "game"; currentGameKey = k;
+        document.getElementById('view-home').classList.add('hidden');
+        document.getElementById('view-order-game').classList.remove('hidden');
+        document.getElementById('checkout-bar').classList.remove('hidden');
+        document.getElementById('game-title-display').innerText = prices[k].name;
+        
+        const isDouble = prices[k].type === 'double';
+        document.getElementById('input-server').style.display = isDouble ? 'block' : 'none';
+        document.getElementById('input-id').style.width = isDouble ? '60%' : '100%';
+        
+        const g = document.getElementById('nominal-list');
+        g.innerHTML = "";
+        prices[k].items.forEach(i => {
+            const d = document.createElement('div');
+            d.className = 'nominal-card';
+            d.innerHTML = `<span class="item-name">${i.n}</span><span class="item-price">Rp ${i.p}</span>`;
+            d.onclick = () => {
+                document.querySelectorAll('.nominal-card').forEach(x => x.classList.remove('active'));
+                d.classList.add('active');
+                selectedGameItem = i;
+            };
+            g.appendChild(d);
+        });
+    };
+
+    window.openEwallet = () => {
+        activeMode = "ewallet";
+        document.getElementById('view-home').classList.add('hidden');
+        document.getElementById('view-order-ewallet').classList.remove('hidden');
+        document.getElementById('checkout-bar').classList.remove('hidden');
+    };
+
+    window.goHome = () => {
+        activeMode = ""; currentPromo = null; tempOrderData = null; selectedGameItem = null;
+        ['view-order-game', 'view-order-ewallet', 'view-admin-login', 'view-admin-dashboard', 'checkout-bar'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('view-home').classList.remove('hidden');
+        document.getElementById('input-id').value = "";
+        document.getElementById('ewallet-nominal').value = "";
+        document.getElementById('ewallet-phone').value = "";
+        document.getElementById('text-total').innerText = "Rp 0";
+        document.getElementById('user-promo-code').value = "";
+        window.closeModal();
+    };
+
+    window.calcEwallet = () => {
+        const nom = parseInt(document.getElementById('ewallet-nominal').value) || 0;
+        if(nom > 1000000) { alert("Maks 1 Juta"); document.getElementById('ewallet-nominal').value=1000000; return window.calcEwallet(); }
+        let fee = 0; if(nom > 0) fee = nom < 101000 ? 5000 : 10000;
+        document.getElementById('text-admin').innerText = fmtRp(fee);
+        document.getElementById('text-total').innerText = fmtRp(nom+fee);
+    };
+
+    // --- MODAL ---
+    window.validateModal = () => {
+        const oid = genId();
+        let valid = false;
+        if(activeMode === 'game') {
+            const uid = document.getElementById('input-id').value;
+            const sid = document.getElementById('input-server').value;
+            if(!uid || !selectedGameItem) return alert("Mohon lengkapi data!");
+            if(prices[currentGameKey].type==='double' && !sid) return alert("Mohon isi Server ID!");
+            const fid = sid ? `${uid} (${sid})` : uid;
+            const pnum = parseInt(selectedGameItem.p.replace(/\./g, ''));
+            tempOrderData = {
+                orderId: oid, type: 'game', deviceId: myDeviceId,
+                title: prices[currentGameKey].name,
+                desc: `${selectedGameItem.n} - ID: ${fid}`,
+                originalPrice: pnum, finalPrice: pnum,
+                createdAt: Date.now(), status: 'pending'
+            };
+            valid = true;
+        } else {
+            const nom = parseInt(document.getElementById('ewallet-nominal').value);
+            const ph = document.getElementById('ewallet-phone').value;
+            const typ = document.getElementById('ewallet-type').value;
+            if(!nom || !ph) return alert("Mohon lengkapi data!");
+            if(nom < 10000) return alert("Minimal Rp 10.000");
+            const fee = nom < 101000 ? 5000 : 10000;
+            const tot = nom + fee;
+            tempOrderData = {
+                orderId: oid, type: 'ewallet', deviceId: myDeviceId,
+                title: `Top Up ${typ}`,
+                desc: `Isi ${fmtRp(nom)} - No: ${ph}`,
+                originalPrice: tot, finalPrice: tot,
+                createdAt: Date.now(), status: 'pending'
+            };
+            valid = true;
+        }
+        if(valid) { updateModalUI(); document.getElementById('confirmation-modal').style.display = 'flex'; }
+    };
+
+    window.closeModal = () => document.getElementById('confirmation-modal').style.display = 'none';
+
+    window.applyPromo = () => {
+        const c = document.getElementById('user-promo-code').value.toUpperCase().trim();
+        if(!c) return;
+        onSnapshot(query(collection(db, PROMO_COL), where('code','==',c), where('isUsed','==',false)), (snap) => {
+            if(!snap.empty) {
+                const d = snap.docs[0];
+                currentPromo = { id: d.id, ...d.data() };
+                alert("Kode Promo Valid!");
+                updateModalUI();
+            } else {
+                alert("Kode Tidak Valid / Sudah Dipakai");
+                currentPromo = null;
+                updateModalUI();
+            }
+        });
+    };
+
+    function updateModalUI() {
+        let final = tempOrderData.originalPrice;
+        let disc = currentPromo ? currentPromo.value : 0;
+        final -= disc; if(final < 0) final = 0;
+        tempOrderData.finalPrice = final;
+        document.getElementById('modal-details').innerHTML = `
+            <div style="margin-bottom:5px; font-weight:bold;">${tempOrderData.title}</div>
+            <div style="margin-bottom:10px; color:#ccc; font-size:0.9rem;">${tempOrderData.desc}</div>
+            <div style="border-top:1px solid #444; padding-top:10px;">
+                <div style="display:flex; justify-content:space-between;"><span>Harga Awal:</span> <span>${fmtRp(tempOrderData.originalPrice)}</span></div>
+                ${currentPromo ? `<div style="display:flex; justify-content:space-between; color:#10b981;"><span>Diskon:</span> <span>-${fmtRp(disc)}</span></div>` : ''}
+                <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.3rem; color:var(--accent); margin-top:8px;">
+                    <span>Total:</span> <span>${fmtRp(final)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- PROCESS ---
+    window.processOrder = async () => {
+        if(!tempOrderData) return;
+        let msg = `Halo Admin! Saya mau order:%0A%0A🆔 *ID Order:* ${tempOrderData.orderId}%0A🎮 *Item:* ${tempOrderData.title}%0A📝 *Detail:* ${tempOrderData.desc}%0A💰 *Bayar:* ${fmtRp(tempOrderData.finalPrice)}`;
+        if(currentPromo) msg += `%0A🎟️ *Promo:* ${currentPromo.code}`;
+        window.open(`https://wa.me/6285656321860?text=${msg}`, '_blank');
+        window.goHome();
+        try {
+            await addDoc(collection(db, ORDERS_COL), { ...tempOrderData, priceDisplay: fmtRp(tempOrderData.finalPrice) });
+            if(currentPromo) await updateDoc(doc(db, PROMO_COL, currentPromo.id), { isUsed: true });
+        } catch(e) { console.error(e); }
+    };
+
+    // --- ADMIN ---
+    window.checkAdminSession = () => {
+        if(localStorage.getItem('isAdmin')==='true') {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-admin-dashboard').classList.remove('hidden');
+            initAdmin();
+        } else {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-admin-login').classList.remove('hidden');
+        }
+    };
+
+    window.processLogin = () => {
+        if(document.getElementById('admin-user').value.toLowerCase()==='teves12' && 
+           document.getElementById('admin-pass').value==='Melati@12') {
+            localStorage.setItem('isAdmin','true'); window.checkAdminSession();
+        } else { alert("Login Gagal!"); }
+    };
+    window.adminLogout = () => { localStorage.removeItem('isAdmin'); window.goHome(); };
+
+    function initAdmin() {
+        onSnapshot(query(collection(db, PROMO_COL), where('isUsed','==',false)), (snap) => {
+            let h = "";
+            snap.forEach(d => {
+                h += `<div style="background:#334155; padding:12px; margin-bottom:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold; color:var(--accent);">${d.data().code} (-${fmtRp(d.data().value)})</span>
+                    <button onclick="window.delPromo('${d.id}')" style="background:#ef4444; border:none; color:white; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold;">Hapus</button>
+                </div>`;
+            });
+            document.getElementById('admin-promo-list').innerHTML = h;
+        });
+        onSnapshot(query(collection(db, ORDERS_COL), orderBy('createdAt','desc')), (snap) => {
+            let h = "";
+            snap.forEach(d => {
+                const da = d.data();
+                const col = da.status==='success'?'#10b981':(da.status==='failed'?'#ef4444':'#fbbf24');
+                h += `<div class="admin-card">
+                    <div style="display:flex; justify-content:space-between; color:${col}; font-weight:bold; margin-bottom:8px; font-size:0.9rem;">
+                        <span>${da.status.toUpperCase()}</span> <span>${da.orderId}</span>
+                    </div>
+                    <div style="font-weight:bold; font-size:1rem;">${da.title}</div>
+                    <small style="color:#94a3b8; display:block; margin-top:2px;">${da.desc}</small>
+                    <div style="font-weight:800; margin:10px 0; font-size:1.1rem; color:#fbbf24">${da.priceDisplay}</div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-action" style="background:#fbbf24; color:black; flex:1;" onclick="window.upStat('${d.id}','pending')">Proses</button>
+                        <button class="btn-action" style="background:#10b981; flex:1;" onclick="window.upStat('${d.id}','success')">Sukses</button>
+                        <button class="btn-action" style="background:#ef4444; flex:1;" onclick="window.upStat('${d.id}','failed')">Gagal</button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('admin-order-list').innerHTML = h;
+        });
+    }
+
+    window.addPromo = async () => {
+        const c = document.getElementById('new-promo-code').value.toUpperCase().trim();
+        const v = document.getElementById('new-promo-value').value;
+        if(c&&v) { await addDoc(collection(db, PROMO_COL), {code:c, value:parseInt(v), isUsed:false}); alert("Promo Berhasil Dibuat!"); }
+    };
+    window.delPromo = async (id) => await deleteDoc(doc(db, PROMO_COL, id));
+    window.upStat = async (id, st) => await updateDoc(doc(db, ORDERS_COL, id), {status:st});
+    
+    window.uploadBanner = () => {
+        const f = document.getElementById('banner-upload').files[0];
+        if(!f) return;
+        const r = new FileReader();
+        r.onload = async (e) => {
+            banners.push(e.target.result);
+            await updateDoc(doc(db, CONFIG_COL, "main_config"), { banners });
+            alert("Banner Berhasil Diupload!");
+        };
+        r.readAsDataURL(f);
+    };
+    window.delBanner = async (i) => { banners.splice(i,1); await updateDoc(doc(db, CONFIG_COL, "main_config"), { banners }); };
+
+    window.loadAdminPrices = () => {
+        const k = document.getElementById('admin-game-select').value;
+        let h = "";
+        prices[k].items.forEach((it, i) => {
+            h += `<div style="display:flex; gap:10px; margin-bottom:8px;">
+                <input type="text" value="${it.n}" id="pn_${k}_${i}" class="form-input" style="padding:10px; flex:1;">
+                <input type="text" value="${it.p}" id="pp_${k}_${i}" class="form-input" style="padding:10px; flex:1;">
+            </div>`;
+        });
+        document.getElementById('admin-price-editor').innerHTML = h;
+    };
+    window.savePriceChanges = async () => {
+        const k = document.getElementById('admin-game-select').value;
+        const ns = document.querySelectorAll(`[id^='pn_${k}_']`);
+        const ps = document.querySelectorAll(`[id^='pp_${k}_']`);
+        let a = [];
+        for(let i=0; i<ns.length; i++) a.push({n: ns[i].value, p: ps[i].value});
+        prices[k].items = a;
+        await updateDoc(doc(db, CONFIG_COL, "main_config"), { prices: JSON.stringify(prices) });
+        alert("Harga Berhasil Disimpan!");
+    };
+
+    onSnapshot(query(collection(db, ORDERS_COL), where('deviceId','==',myDeviceId), orderBy('createdAt','desc')), (snap) => {
+        const l = document.getElementById('history-list');
+        l.innerHTML = "";
+        if(snap.empty) { l.innerHTML = "<p style='text-align:center; padding:30px; color:#666'>Belum ada riwayat transaksi.</p>"; return; }
+        snap.forEach(d => {
+            const da = d.data();
+            const cls = da.status==='success'?'status-success':(da.status==='failed'?'status-failed':'status-pending');
+            l.innerHTML += `<div class="history-card">
+                <div class="badge ${cls}" style="float:right;">${da.status}</div>
+                <div style="font-weight:bold; font-size:1rem; margin-bottom:5px;">${da.title}</div>
+                <div style="font-size:0.85rem; color:#ccc; margin-bottom:10px;">${da.desc}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:10px;">
+                    <span style="color:#fbbf24; font-weight:bold;">${da.priceDisplay}</span>
+                    <button class="btn-action" style="background:#334155; margin:0;" onclick="window.open('https://wa.me/6285656321860?text=Halo Admin, mau tanya status Order ID ${da.orderId}')">Bantuan</button>
+                </div>
+            </div>`;
+        });
+    });
+
+    initConfig();
+</script>
+</body>
+</html>
